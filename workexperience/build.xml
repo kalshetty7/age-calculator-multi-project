@@ -1,0 +1,46 @@
+<project name="workexperience" basedir="." default="clean-build">
+
+	<property name="src.dir" value="src/main/java" />
+
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="lib.dir" value="../../libs" />
+
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<ant antfile="../agecalculator/build.xml"  target="clean-build"/>
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" source="11" target="11" failonerror="true">
+			<classpath>
+				<path id="class.path">
+					<fileset dir="${lib.dir}">
+						<include name="**/*.jar" />
+					</fileset>
+					<fileset dir="../agecalculator/build/jar">
+						<include name="**/*.jar" />
+					</fileset>
+				</path>
+			</classpath>
+			
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" />
+	</target>
+
+	<target name="run" depends="jar">
+		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true" />
+	</target>
+
+	<target name="clean-build" depends="clean,jar" />
+
+	<target name="main" depends="clean,run" />
+
+</project>

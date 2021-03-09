@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<project default="archive">
+	<property file="../build.properties" />
+	<basename property="ant.project.name" file="${basedir}" />
+	<target name="init">
+		<delete dir="${build.dir}" />
+		<mkdir dir="${build.dir}/classes" />
+	</target>
+	<target name="compile" depends="init">
+		<javac srcdir="src" destdir="${build.dir}/classes" includeantruntime="false">
+			<classpath refid="classpath.libs" />
+		</javac>
+	</target>
+	<target name="archive" depends="compile">
+		<property name="manifest.mf" location="${build.dir}/manifest.mf" />
+		<manifest file="${manifest.mf}">
+			<attribute name="Built-By" value="${user.name}" />
+			<attribute name="Sealed" value="true" />
+			<attribute name="Built-On" value="${timestamp.isoformat}" />
+			<attribute name="Main-Class" value="${main.class}" />
+		</manifest>
+		<jar duplicate="preserve" manifest="${manifest.mf}" destfile="${build.dir}/${ant.project.name}.jar" basedir="${build.dir}/classes" />
+	</target>
+	<path id="classpath.libs">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+</project>
